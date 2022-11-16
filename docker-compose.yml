@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  #run: docker-compose down --volumes to refresh everything
+  postgrescustomers-postgres:
+    container_name: postgrescustomers-postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=crud_app
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - '5436:5432'
+    volumes:
+      - postgrescustomers-postgres-volume:/var/lib/postgresql/data
+      # copy the sql script to create tables
+      - ./migrations/down.sql:/docker-entrypoint-initdb.d/down.sql
+      # copy the sql script to fill tables
+      - ./migrations/up.sql:/docker-entrypoint-initdb.d/up.sql
+volumes:
+  postgrescustomers-postgres-volume:
