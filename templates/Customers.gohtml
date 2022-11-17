@@ -16,10 +16,10 @@
                 {{ range .Customers }}
                     <tr>
                         <td>{{ .Id }}</td>
-                        <td><a href="/show?id={{ .Id }}">{{ .FirstName }} </a></td>
-                        <td><a href="/show?id={{ .Id }}">{{ .LastName }} </a></td>
-                        <td><a href="/edit?id={{ .Id }}">Edit</a></td>
-                        <td><a href="/delete?id={{ .Id }}">Delete</a></td>
+                        <td><a href="/show-customer?id={{ .Id }}">{{ .FirstName }} </a></td>
+                        <td><a href="/show-customer?id={{ .Id }}">{{ .LastName }} </a></td>
+                        <td><a href="/edit-customer?id={{ .Id }}">Edit</a></td>
+                        <td><a href="/delete-customer?id={{ .Id }}">Delete</a></td>
                     </tr>
                 {{ end }}
                 </tbody>

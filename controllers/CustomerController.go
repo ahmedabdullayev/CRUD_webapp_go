@@ -38,14 +38,24 @@ func (controller *CustomerController) Customers(w http.ResponseWriter, request *
 	customers, err := controller.repository.GetAll(searchParams)
 
 	if err != nil {
-		panic(err.Error())
+		http.Error(w, err.Error(), 500)
+		return
 	}
+
 	var tmpl = template.Must(template.ParseGlob("templates/*")) // our templates
-	tmpl.ExecuteTemplate(w, "Customers.gohtml", customers)
+	err = tmpl.ExecuteTemplate(w, "Customers.gohtml", customers)
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 }
 func (controller *CustomerController) CreateView(w http.ResponseWriter, r *http.Request) {
 	var tmpl = template.Must(template.ParseGlob("templates/*"))
-	tmpl.ExecuteTemplate(w, "CreateCustomer.gohtml", nil)
+	err := tmpl.ExecuteTemplate(w, "CreateCustomer.gohtml", nil)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+	}
 }
 func (controller *CustomerController) Post(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
@@ -100,11 +110,33 @@ func (controller *CustomerController) Post(w http.ResponseWriter, r *http.Reques
 	http.Redirect(w, r, "/", 303)
 }
 
+func (controller *CustomerController) EditView(w http.ResponseWriter, r *http.Request) {
+	queryId := r.URL.Query().Get("id")
+	customerId, err := strconv.Atoi(queryId)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	customer, err := controller.repository.GetOne(customerId)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	customerEdit := model.CustomerEdit{
+		Customer: customer,
+		Errors:   nil,
+	}
+	var tmpl = template.Must(template.ParseGlob("templates/*"))
+	tmpl.ExecuteTemplate(w, "EditCustomer.gohtml", customerEdit)
+}
+
 func (controller *CustomerController) Router() *mux.Router {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/", controller.Customers).Methods(http.MethodGet)
 	router.HandleFunc("/create-customer", controller.CreateView).Methods(http.MethodGet)
+	router.HandleFunc("/edit-customer", controller.EditView).Methods(http.MethodGet)
 
 	router.HandleFunc("/create-customer", controller.Post).Methods(http.MethodPost)
 

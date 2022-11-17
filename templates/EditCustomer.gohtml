@@ -1,0 +1,47 @@
+{{ template "Header"}}
+    <main>
+        <div>
+            <h2>Edit Customer</h2>
+            <form method="POST" action="create-customer">
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" name="firstName" class="form-control" id="firstName" value="{{ .Customer.FirstName }}" >
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" name="lastName" class="form-control" id="lastName" value="{{ .Customer.LastName }}" >
+                </div>
+                <div class="mb-3">
+                    <label for="birthDate" class="form-label">Birth Date</label>
+                    <input type="datetime-local" name="birthDate" class="form-control" value="" id="birthDate" >
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Choose gender:</label>
+                    <input type="radio" name="gender" class="form-control" value="Female" >
+                    <input type="radio" name="gender" class="form-control" value="Male" >
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input type="email" name="email" class="form-control" id="email" value="{{ .Customer.Email }}" >
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address</label>
+                    <input type="text" name="address" class="form-control" id="address" value="{{ .Customer.Address }}">
+                </div>
+                <div class="mb-3">
+                    <input type="submit" class="btn btn-primary" value="Edit" />
+                </div>
+                {{ range .Errors }}
+                    <p style="color: red"> Please fix  <b> {{ . }} </b> field </p>
+                {{ end }}
+            </form>
+
+        </div>
+    </main>
+    <script lang="js">
+        // convert to datetime-local format
+        let birthDate = new Date({{ .Customer.BirthDate }});
+        birthDate.setMinutes(birthDate.getMinutes() - birthDate.getTimezoneOffset());
+        document.getElementById('birthDate').value = birthDate.toISOString().slice(0,16);
+    </script>
+{{ template "Footer"}}

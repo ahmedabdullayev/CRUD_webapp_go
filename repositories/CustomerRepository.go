@@ -23,17 +23,30 @@ func NewCustomerRepository(db *sql.DB) contracts.CustomerRepositoryInterface {
 }
 
 func (rep CustomerRepository) GetOne(id int) (model.Customer, error) {
-	//TODO implement me
-	panic("implement me")
+	customer := model.Customer{}
+	row := rep.DB.QueryRow("SELECT * FROM customers WHERE id = $1", id)
+
+	err := row.Scan(&customer.Id, &customer.FirstName,
+		&customer.LastName, &customer.BirthDate,
+		&customer.Gender, &customer.Email, &customer.Address)
+
+	if err != nil {
+		return customer, err
+	}
+
+	return customer, nil
 }
 
 func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.CustomersPage, error) {
 	var customersPage model.CustomersPage
 	var totalRows int
-	rep.DB.QueryRow("SELECT COUNT(*) FROM customers WHERE "+
+	err := rep.DB.QueryRow("SELECT COUNT(*) FROM customers WHERE "+
 		"LOWER(first_name) LIKE '%' || $1 || '%' "+
 		"AND LOWER(last_name) LIKE '%' || $2 || '%'",
 		strings.ToLower(searchParams.FirstName), strings.ToLower(searchParams.LastName)).Scan(&totalRows)
+	if err != nil {
+		return model.CustomersPage{}, err
+	}
 
 	var queryString string
 	if searchParams.Offset < DefaultOffset {
@@ -80,7 +93,10 @@ func (rep CustomerRepository) Create(customer *model.Customer) error {
 		return err
 	}
 
-	stmt.Exec(customer.FirstName, customer.LastName, customer.BirthDate, customer.Gender, customer.Email, customer.Address)
+	_, err = stmt.Exec(customer.FirstName, customer.LastName, customer.BirthDate, customer.Gender, customer.Email, customer.Address)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
