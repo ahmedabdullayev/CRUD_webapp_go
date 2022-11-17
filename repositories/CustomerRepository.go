@@ -22,6 +22,11 @@ func NewCustomerRepository(db *sql.DB) contracts.CustomerRepositoryInterface {
 	return &CustomerRepository{DB: db}
 }
 
+func (rep CustomerRepository) GetOne(id int) (model.Customer, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.CustomersPage, error) {
 	var customersPage model.CustomersPage
 	var totalRows int
@@ -68,11 +73,19 @@ func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.Cus
 }
 
 func (rep CustomerRepository) Create(customer *model.Customer) error {
-	//TODO implement me
-	panic("implement me")
+	stmt, err := rep.DB.Prepare("INSERT INTO customers (first_name, last_name, birth_date, gender, email, address) " +
+		"VALUES($1, $2, $3, $4, $5, $6)")
+
+	if err != nil {
+		return err
+	}
+
+	stmt.Exec(customer.FirstName, customer.LastName, customer.BirthDate, customer.Gender, customer.Email, customer.Address)
+
+	return nil
 }
 
-func (rep CustomerRepository) UpdateOne(customer *model.Customer) error {
+func (rep CustomerRepository) Update(customer *model.Customer) error {
 	//TODO implement me
 	panic("implement me")
 }
