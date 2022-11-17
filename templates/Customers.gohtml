@@ -1,0 +1,30 @@
+{{ template "Header" }}
+
+    <main>
+        <div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>First name</td>
+                    <td>Last name</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
+                </tr>
+                </thead>
+                <tbody>
+                {{ range .Customers }}
+                    <tr>
+                        <td>{{ .Id }}</td>
+                        <td><a href="/show?id={{ .Id }}">{{ .FirstName }} </a></td>
+                        <td><a href="/show?id={{ .Id }}">{{ .LastName }} </a></td>
+                        <td><a href="/edit?id={{ .Id }}">Edit</a></td>
+                        <td><a href="/delete?id={{ .Id }}">Delete</a></td>
+                    </tr>
+                {{ end }}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+{{ template "Footer" }}
