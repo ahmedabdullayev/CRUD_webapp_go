@@ -13,6 +13,8 @@ import (
 
 const DefaultLimit = 5
 const DefaultOffset = 5
+const DefaultOrderBy = "id"
+const DefaultOrderType = "DESC"
 
 type CustomerRepository struct {
 	DB *sql.DB
@@ -48,14 +50,24 @@ func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.Cus
 		return model.CustomersPage{}, err
 	}
 
+	orderBy := DefaultOrderBy
+	orderType := DefaultOrderType
+
+	if searchParams.OrderBy != "" {
+		orderBy = searchParams.OrderBy
+	}
+	if searchParams.OrderType != "" {
+		orderType = searchParams.OrderType
+	}
+
 	var queryString string
 	if searchParams.Offset < DefaultOffset {
 		queryString = "SELECT * FROM customers WHERE " +
 			"LOWER(first_name) LIKE '%' || $1 || '%' " +
-			"AND LOWER(last_name) LIKE '%' || $2 || '%' ORDER BY id DESC LIMIT $3"
+			"AND LOWER(last_name) LIKE '%' || $2 || '%' ORDER BY " + orderBy + " " + orderType + " LIMIT $3"
 	} else {
 		queryString = "SELECT * FROM customers WHERE LOWER(first_name) LIKE '%' || $1 || '%' " +
-			"AND LOWER(last_name) LIKE '%' || $2 || '%' ORDER BY id DESC LIMIT $3 OFFSET " +
+			"AND LOWER(last_name) LIKE '%' || $2 || '%' ORDER BY " + orderBy + " " + orderType + " LIMIT $3 OFFSET " +
 			strconv.Itoa(searchParams.Offset)
 	}
 
@@ -63,10 +75,12 @@ func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.Cus
 		strings.ToLower(searchParams.FirstName),
 		strings.ToLower(searchParams.LastName),
 		DefaultLimit)
+
 	if err != nil {
 		return customersPage, err
 	}
-	customers, err := CustomerHelpers.CustomersToList(customersQuery)
+
+	customers, _ := CustomerHelpers.CustomersToList(customersQuery)
 
 	totalPages := int(math.Ceil(float64(totalRows) / float64(DefaultLimit)))
 	customersPage = model.CustomersPage{

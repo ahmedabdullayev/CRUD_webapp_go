@@ -17,9 +17,9 @@ services:
       - '5436:5432'
     volumes:
       - postgrescustomers-postgres-volume:/var/lib/postgresql/data
-      # copy the sql script to create tables
+      # sql script to delete table
       - ./migrations/down.sql:/docker-entrypoint-initdb.d/down.sql
-      # copy the sql script to fill tables
+      # sql script to create table and fill it
       - ./migrations/up.sql:/docker-entrypoint-initdb.d/up.sql
 volumes:
   postgrescustomers-postgres-volume:

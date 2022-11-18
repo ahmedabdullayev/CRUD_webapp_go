@@ -1,5 +1,56 @@
 {{ template "Header" }}
+<script lang="js">
+    document.addEventListener('DOMContentLoaded', () => {
+        addPagination()
+        console.log(window.location)
+    }, false);
 
+    function addPagination()
+    {
+        let pages = {{.Pages}}
+            function pagination() {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+
+                let numberButtons = '<ul class="pagination">';
+                for (let i = 0; i < pages.length; i++) {
+                    if (urlParams.get("orderBy") != null){
+                        pages[i] += '&orderBy=' + urlParams.get("orderBy");
+                    }
+                    if (urlParams.get("orderType") != null){
+                        pages[i] += '&orderType=' + urlParams.get("orderType");
+                    }
+                    numberButtons = numberButtons + `<li class="page-item"><a class="page-link" href="${pages[i]}">${i + 1}</a></li>`;
+                }
+                return numberButtons + '</ul>';
+            }
+        document.getElementById("pagination").innerHTML = pagination()
+    }
+
+    function addSortUrls(orderByParam, orderTypeParam){
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        const getUrl = window.location;
+        const baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+
+        const firstName = urlParams.get("firstName");
+        const lastName = urlParams.get("lastName");
+        const offset = urlParams.get("offset");
+        const orderBy = urlParams.get("orderBy");
+        const orderType = urlParams.get("orderType");
+
+        let url = ""
+
+            url += '?firstName=' + (firstName ?? '')
+            url += '&lastName=' + (lastName ?? '')
+            url += '&offset=' + (offset ?? 0)
+        url += '&orderBy=' + orderByParam + '&orderType=' + orderTypeParam
+
+        window.location.href = url;
+    }
+
+</script>
     <main class="flex-shrink-0">
         <div class="container">
             <form method="get" action="/" class="row g-3">
@@ -16,9 +67,18 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <td>ID</td>
-                    <td>First name</td>
-                    <td>Last name</td>
+                    <td>ID
+                        <i class="fa-solid fa-arrow-down" onclick="addSortUrls('id', 'ASC')"></i>
+                        <i class="fa-solid fa-arrow-up" onclick="addSortUrls('id', 'DESC')"></i>
+                    </td>
+                    <td>First name
+                        <i class="fa-solid fa-arrow-down" onclick="addSortUrls('first_name', 'ASC')"></i>
+                        <i class="fa-solid fa-arrow-up" onclick="addSortUrls('first_name', 'DESC')"></i>
+                    </td>
+                    <td>Last name
+                        <i class="fa-solid fa-arrow-down" onclick="addSortUrls('last_name', 'ASC')"></i>
+                        <i class="fa-solid fa-arrow-up" onclick="addSortUrls('last_name', 'DESC')"></i>
+                    </td>
                     <td>Edit</td>
                     <td>Delete</td>
                 </tr>
@@ -39,18 +99,6 @@
         </div>
 
     </main>
-    <script lang="js">
-        let pages = {{.Pages}}
 
-        function pagination() {
-            let numberButtons = '<ul class="pagination">';
-            for (let i = 0; i < pages.length; i++) {
-                numberButtons = numberButtons + `<li class="page-item"><a class="page-link" href="${pages[i]}">${i+1}</a></li>`;
-            }
-            return numberButtons + '</ul>';
-        }
-
-        document.getElementById("pagination").innerHTML = pagination()
-    </script>
 
 {{ template "Footer" }}

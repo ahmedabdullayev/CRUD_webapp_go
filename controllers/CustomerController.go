@@ -25,12 +25,16 @@ func (controller *CustomerController) Customers(w http.ResponseWriter, request *
 
 	firstName := urlParams.Get("firstName")
 	lastName := urlParams.Get("lastName")
+	orderBy := urlParams.Get("orderBy")
+	orderType := urlParams.Get("orderType")
 	offset, _ := strconv.Atoi(urlParams.Get("offset"))
 
 	searchParams := model.SearchParams{
 		FirstName: firstName,
 		LastName:  lastName,
 		Offset:    offset,
+		OrderBy:   orderBy,
+		OrderType: orderType,
 	}
 
 	customers, err := controller.repository.GetAll(searchParams)
