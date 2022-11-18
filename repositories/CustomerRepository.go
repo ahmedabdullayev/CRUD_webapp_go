@@ -1,8 +1,8 @@
 package repositories
 
 import (
+	"CRUD_webapp_go/CustomerHelpers"
 	"CRUD_webapp_go/contracts"
-	"CRUD_webapp_go/helpers"
 	"CRUD_webapp_go/model"
 	"database/sql"
 	"fmt"
@@ -66,7 +66,7 @@ func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.Cus
 	if err != nil {
 		return customersPage, err
 	}
-	customers, err := helpers.CustomersToList(customersQuery)
+	customers, err := CustomerHelpers.CustomersToList(customersQuery)
 
 	totalPages := int(math.Ceil(float64(totalRows) / float64(DefaultLimit)))
 	customersPage = model.CustomersPage{
@@ -93,7 +93,8 @@ func (rep CustomerRepository) Create(customer *model.Customer) error {
 		return err
 	}
 
-	_, err = stmt.Exec(customer.FirstName, customer.LastName, customer.BirthDate, customer.Gender, customer.Email, customer.Address)
+	_, err = stmt.Exec(customer.FirstName, customer.LastName, customer.BirthDate, customer.Gender,
+		customer.Email, customer.Address)
 	if err != nil {
 		return err
 	}
@@ -102,8 +103,21 @@ func (rep CustomerRepository) Create(customer *model.Customer) error {
 }
 
 func (rep CustomerRepository) Update(customer *model.Customer) error {
-	//TODO implement me
-	panic("implement me")
+	query, err := rep.DB.Prepare("UPDATE customers SET first_name=$1, last_name=$2, birth_date=$3, gender=$4, " +
+		"email=$5, address=$6 WHERE id=$7")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = query.Exec(customer.FirstName, customer.LastName, customer.BirthDate, customer.Gender, customer.Email,
+		customer.Address, customer.Id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (rep CustomerRepository) Delete(id int) error {

@@ -2,7 +2,8 @@
     <main>
         <div>
             <h2>Edit Customer</h2>
-            <form method="POST" action="create-customer">
+            <form method="POST" action="edit-customer">
+                <input type="hidden" name="id" value="{{ .Customer.Id }}">
                 <div class="mb-3">
                     <label for="firstName" class="form-label">First Name</label>
                     <input type="text" name="firstName" class="form-control" id="firstName" value="{{ .Customer.FirstName }}" >
@@ -13,12 +14,12 @@
                 </div>
                 <div class="mb-3">
                     <label for="birthDate" class="form-label">Birth Date</label>
-                    <input type="datetime-local" name="birthDate" class="form-control" value="" id="birthDate" >
+                    <input type="datetime-local" name="birthDate" class="form-control" value="" id="birthDate">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Choose gender:</label>
-                    <input type="radio" name="gender" class="form-control" value="Female" >
-                    <input type="radio" name="gender" class="form-control" value="Male" >
+                    Female <input type="radio" name="gender" class="form-control" value="Female" >
+                    Male <input type="radio" name="gender" class="form-control" value="Male" >
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">E-mail</label>
@@ -39,7 +40,7 @@
         </div>
     </main>
     <script lang="js">
-        // convert to datetime-local format
+        // convert to datetime-local format and set birthDate
         let birthDate = new Date({{ .Customer.BirthDate }});
         birthDate.setMinutes(birthDate.getMinutes() - birthDate.getTimezoneOffset());
         document.getElementById('birthDate').value = birthDate.toISOString().slice(0,16);

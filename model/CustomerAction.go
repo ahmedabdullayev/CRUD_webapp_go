@@ -1,6 +1,6 @@
 package model
 
-type CustomerEdit struct {
+type CustomerAction struct {
 	Customer Customer
 	Errors   []string
 }
