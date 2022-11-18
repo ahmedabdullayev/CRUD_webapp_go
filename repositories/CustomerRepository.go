@@ -121,6 +121,11 @@ func (rep CustomerRepository) Update(customer *model.Customer) error {
 }
 
 func (rep CustomerRepository) Delete(id int) error {
-	//TODO implement me
-	panic("implement me")
+	query, err := rep.DB.Prepare("DELETE FROM customers WHERE id=$1")
+	if err != nil {
+		return err
+	}
+	query.Exec(id)
+
+	return nil
 }
