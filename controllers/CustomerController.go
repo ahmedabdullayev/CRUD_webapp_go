@@ -121,12 +121,32 @@ func (controller *CustomerController) EditView(w http.ResponseWriter, r *http.Re
 	tmpl.ExecuteTemplate(w, "EditCustomer.gohtml", customerEdit)
 }
 
+func (controller *CustomerController) Show(w http.ResponseWriter, r *http.Request) {
+	queryId := r.URL.Query().Get("id")
+	customerId, err := strconv.Atoi(queryId)
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	customer, err := controller.repository.GetOne(customerId)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	var tmpl = template.Must(template.ParseGlob("templates/*"))
+	tmpl.ExecuteTemplate(w, "ShowCustomer.gohtml", customer)
+}
+
 func (controller *CustomerController) Router() *mux.Router {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/", controller.Customers).Methods(http.MethodGet)
 	router.HandleFunc("/create-customer", controller.CreateView).Methods(http.MethodGet)
 	router.HandleFunc("/edit-customer", controller.EditView).Methods(http.MethodGet)
+	router.HandleFunc("/show-customer", controller.Show).Methods(http.MethodGet)
 
 	router.HandleFunc("/create-customer", controller.Post).Methods(http.MethodPost)
 	router.HandleFunc("/edit-customer", controller.Update).Methods(http.MethodPost)

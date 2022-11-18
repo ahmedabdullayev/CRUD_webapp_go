@@ -1,0 +1,16 @@
+{{ template "Header" }}
+<main>
+    <div class="container">
+        <h3>Customer view</h3>
+        <p><b>Id: {{ .Id }}</b></p>
+        <p><b>First name:</b> {{ .FirstName }}</p>
+        <p><b>Last name:</b>  {{ .LastName }}</p>
+        <p><b>Birth Date:</b>  {{ .BirthDate }}</p>
+        <p><b>Gender:</b>  {{ .Gender }}</p>
+        <p><b>Email:</b>  {{ .Email }}</p>
+        <p><b>Address:</b>  {{ .Address }}</p>
+        <br/>
+        <a href="/edit-customer?id={{ .Id }}">Edit</a></p>
+    </div>
+</main>
+{{ template "Footer" }}
