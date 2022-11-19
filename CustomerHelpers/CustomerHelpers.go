@@ -41,12 +41,14 @@ func CustomersToList(rows *sql.Rows) ([]model.Customer, error) {
 func ValidateBirthDate(birthDate string) (time.Time, error) {
 	var formedBirthDate = time.Time{}
 	layout := "2006-01-02T15:04"
+
 	if birthDate != "" {
 		formedBirthDate, _ = time.Parse(layout, birthDate)
 		currentDate := time.Now()
 		tooYoungBirthDate := formedBirthDate.AddDate(18, 0, 0)
 		tooOldBirthDate := formedBirthDate.AddDate(60, 0, 0)
 		isInRangeOf18to60Years := tooYoungBirthDate.Before(currentDate) && currentDate.Before(tooOldBirthDate)
+
 		if !isInRangeOf18to60Years {
 			return time.Time{}, errors.New("Customer should be in range of 18 to 60 years old")
 		}
@@ -69,7 +71,6 @@ func ValidatePostPutActions(r *http.Request) (model.Customer, []string) {
 	//
 	id := r.FormValue("id")
 	idInt, _ := strconv.Atoi(id)
-	print(idInt)
 	customer := model.Customer{
 		Id:        idInt,
 		FirstName: r.FormValue("firstName"),

@@ -4,8 +4,8 @@ import (
 	"CRUD_webapp_go/CustomerHelpers"
 	"CRUD_webapp_go/contracts"
 	"CRUD_webapp_go/model"
-	"database/sql"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 	"math"
 	"strconv"
 	"strings"
@@ -17,10 +17,10 @@ const DefaultOrderBy = "id"
 const DefaultOrderType = "DESC"
 
 type CustomerRepository struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
-func NewCustomerRepository(db *sql.DB) contracts.CustomerRepositoryInterface {
+func NewCustomerRepository(db *sqlx.DB) contracts.CustomerRepositoryInterface {
 	return &CustomerRepository{DB: db}
 }
 
@@ -99,43 +99,46 @@ func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.Cus
 	return customersPage, nil
 }
 
-func (rep CustomerRepository) Create(customer *model.Customer) error {
-	stmt, err := rep.DB.Prepare("INSERT INTO customers (first_name, last_name, birth_date, gender, email, address) " +
-		"VALUES($1, $2, $3, $4, $5, $6)")
+func (rep CustomerRepository) Create(customer *model.Customer) (int, error) {
+	stmt, err := rep.DB.PrepareNamed("INSERT INTO customers (first_name, last_name, birth_date, gender, email, address) " +
+		"VALUES(:first_name, :last_name, :birth_date, :gender, :email, :address) RETURNING id")
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = stmt.Exec(customer.FirstName, customer.LastName, customer.BirthDate, customer.Gender,
-		customer.Email, customer.Address)
+	var insertedId int
+
+	err = stmt.Get(&insertedId, customer)
+
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return insertedId, nil
 }
 
-func (rep CustomerRepository) Update(customer *model.Customer) error {
-	query, err := rep.DB.Prepare("UPDATE customers SET first_name=$1, last_name=$2, birth_date=$3, gender=$4, " +
-		"email=$5, address=$6 WHERE id=$7")
+func (rep CustomerRepository) Update(customer *model.Customer) (int, error) {
+	query, err := rep.DB.PrepareNamed("UPDATE customers SET first_name = :first_name, last_name = :last_name, " +
+		"birth_date = :birth_date, gender = :gender, email = :email, address = :address WHERE id= :id RETURNING id")
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = query.Exec(customer.FirstName, customer.LastName, customer.BirthDate, customer.Gender, customer.Email,
-		customer.Address, customer.Id)
+	var updatedId int
+
+	err = query.Get(&updatedId, customer)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return updatedId, err
 }
 
 func (rep CustomerRepository) Delete(id int) error {
-	query, err := rep.DB.Prepare("DELETE FROM customers WHERE id=$1")
+	query, err := rep.DB.PrepareNamed("DELETE FROM customers WHERE id=$1")
 	if err != nil {
 		return err
 	}

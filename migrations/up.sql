@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS customers(
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
-    birth_date TIMESTAMP(100) NOT NULL,
+    birth_date TIMESTAMP NOT NULL,
     gender VARCHAR(6) NOT NULL,
     email VARCHAR(55) NOT NULL,
     address VARCHAR(200) NULL

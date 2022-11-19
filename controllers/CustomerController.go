@@ -11,12 +11,12 @@ import (
 )
 
 type CustomerController struct {
-	repository contracts.CustomerRepositoryInterface
+	service contracts.CustomerServiceInterface
 }
 
-func NewCustomerController(repository contracts.CustomerRepositoryInterface) CustomerController {
+func NewCustomerController(service contracts.CustomerServiceInterface) CustomerController {
 	return CustomerController{
-		repository: repository,
+		service: service,
 	}
 }
 
@@ -37,7 +37,7 @@ func (controller *CustomerController) Customers(w http.ResponseWriter, request *
 		OrderType: orderType,
 	}
 
-	customers, err := controller.repository.GetAll(searchParams)
+	customers, err := controller.service.GetAllByParams(searchParams)
 
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -65,13 +65,14 @@ func (controller *CustomerController) Post(w http.ResponseWriter, r *http.Reques
 
 		if len(errors) > 0 {
 			var tmpl = template.Must(template.ParseGlob("templates/*")) // our templates
+			w.WriteHeader(400)
 			tmpl.ExecuteTemplate(w, "CreateCustomer.gohtml", errors)
 			return
 		}
-		create := controller.repository.Create(&customer)
+		_, err := controller.service.Create(&customer)
 
-		if create != nil {
-			http.Error(w, create.Error(), 500)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
 			return
 		}
 
@@ -93,10 +94,10 @@ func (controller *CustomerController) Update(w http.ResponseWriter, r *http.Requ
 			tmpl.ExecuteTemplate(w, "EditCustomer.gohtml", customerEdit)
 			return
 		}
-		create := controller.repository.Update(&customer)
+		_, err := controller.service.Update(&customer)
 
-		if create != nil {
-			http.Error(w, create.Error(), 500)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
 			return
 		}
 
@@ -108,10 +109,10 @@ func (controller *CustomerController) EditView(w http.ResponseWriter, r *http.Re
 	queryId := r.URL.Query().Get("id")
 	customerId, err := strconv.Atoi(queryId)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), 400)
 		return
 	}
-	customer, err := controller.repository.GetOne(customerId)
+	customer, err := controller.service.GetOneById(customerId)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -130,11 +131,11 @@ func (controller *CustomerController) Show(w http.ResponseWriter, r *http.Reques
 	customerId, err := strconv.Atoi(queryId)
 
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), 400)
 		return
 	}
 
-	customer, err := controller.repository.GetOne(customerId)
+	customer, err := controller.service.GetOneById(customerId)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -149,11 +150,11 @@ func (controller *CustomerController) Delete(w http.ResponseWriter, r *http.Requ
 	customerId, err := strconv.Atoi(queryId)
 
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), 400)
 		return
 	}
 
-	deleteCustomer := controller.repository.Delete(customerId)
+	deleteCustomer := controller.service.Delete(customerId)
 
 	if deleteCustomer != nil {
 		http.Error(w, err.Error(), 500)

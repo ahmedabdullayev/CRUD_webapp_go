@@ -1,8 +1,8 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"log"
 	"os"
@@ -15,8 +15,8 @@ func dsn() string {
 		os.Getenv("DB_HOST"), port, os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 }
 
-func DbPool() (*sql.DB, error) {
-	connect, err := sql.Open("postgres", dsn())
+func DbPool() (*sqlx.DB, error) {
+	connect, err := sqlx.Open("postgres", dsn())
 
 	if err != nil {
 		return connect, err
