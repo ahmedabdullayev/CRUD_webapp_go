@@ -1,17 +1,17 @@
 {{ template "Header" }}
 <script lang="js">
     document.addEventListener('DOMContentLoaded', () => {
-        addPagination()
-        console.log(window.location)
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        addPagination(urlParams)
+        setFirstNameAndLastNameFromUrl(urlParams);
     }, false);
 
-    function addPagination()
+    function addPagination(urlParams)
     {
         let pages = {{.Pages}}
             function pagination() {
-                const queryString = window.location.search;
-                const urlParams = new URLSearchParams(queryString);
-
                 let numberButtons = '<ul class="pagination">';
                 for (let i = 0; i < pages.length; i++) {
                     if (urlParams.get("orderBy") != null){
@@ -31,17 +31,11 @@
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
 
-        const getUrl = window.location;
-        const baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
-
         const firstName = urlParams.get("firstName");
         const lastName = urlParams.get("lastName");
         const offset = urlParams.get("offset");
-        const orderBy = urlParams.get("orderBy");
-        const orderType = urlParams.get("orderType");
 
         let url = ""
-
             url += '?firstName=' + (firstName ?? '')
             url += '&lastName=' + (lastName ?? '')
             url += '&offset=' + (offset ?? 0)
@@ -50,15 +44,22 @@
         window.location.href = url;
     }
 
+    function setFirstNameAndLastNameFromUrl(urlParams){
+        const firstName = urlParams.get("firstName") ?? '';
+        const lastName = urlParams.get("lastName") ?? '';
+        document.getElementById('firstName').value = firstName;
+        document.getElementById('lastName').value = lastName;
+    }
+
 </script>
     <main class="flex-shrink-0">
         <div class="container">
             <form method="get" action="/" class="row g-3">
                 <div class="col-md-5">
-                    <input type="text" class="form-control" name="firstName" placeholder="First name" aria-label="First name">
+                    <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First name" aria-label="First name">
                 </div>
                 <div class="col-md-5">
-                    <input type="text" class="form-control" name="lastName" placeholder="Last name" aria-label="Last name">
+                    <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last name" aria-label="Last name">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary">Search</button>
