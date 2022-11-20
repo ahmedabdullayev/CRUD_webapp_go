@@ -6,20 +6,20 @@
             <form method="POST" action="create-customer">
                 <div class="mb-3">
                     <label for="firstName" class="form-label">First Name</label>
-                    <input type="text" name="firstName" class="form-control" id="firstName" >
+                    <input type="text" name="firstName" maxlength="100" class="form-control" id="firstName" required>
                 </div>
                 <div class="mb-3">
                     <label for="lastName" class="form-label">Last Name</label>
-                    <input type="text" name="lastName" class="form-control" id="lastName" >
+                    <input type="text" name="lastName" maxlength="100" class="form-control" id="lastName" required>
                 </div>
                 <div class="mb-3">
                     <label for="birthDate" class="form-label">Birth Date</label>
-                    <input type="datetime-local" name="birthDate" class="form-control" style="width: 250px" id="birthDate" >
+                    <input type="datetime-local" name="birthDate" class="form-control" style="width: 250px" id="birthDate" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Choose gender:</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" id="flexRadioDefault1" value="Female">
+                        <input class="form-check-input" type="radio" name="gender" id="flexRadioDefault1" value="Female" required>
                         <label class="form-check-label" for="flexRadioDefault1">
                             Female
                         </label>
@@ -33,11 +33,11 @@
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">E-mail</label>
-                    <input type="email" name="email" class="form-control" id="email" >
+                    <input type="email" name="email" class="form-control" id="email" required>
                 </div>
                 <div class="mb-3">
                     <label for="address" class="form-label">Address</label>
-                    <input type="text" name="address" class="form-control" id="address">
+                    <input type="text" maxlength="200" name="address" class="form-control" id="address">
                 </div>
                 <div class="mb-3">
                     <input type="submit" class="btn btn-primary" value="Create" />
