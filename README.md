@@ -6,7 +6,7 @@
 
 ## Features
 - View and search customers by first and last names with pagination, each column in list is sortable by ASC/DESC order
-![](README_files/all_customers.png)
+![](README_files/all_customers.png )
 ![](README_files/search_customer.png)
 - Add/edit customer with front/back -end validations(for backend "github.com/go-playground/validator" library)
 ![](README_files/create_customer.png)
