@@ -1,4 +1,4 @@
-package CustomerHelpers
+package customerHelpers
 
 import (
 	"CRUD_webapp_go/model"

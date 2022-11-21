@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"CRUD_webapp_go/CustomerHelpers"
 	"CRUD_webapp_go/contracts"
+	"CRUD_webapp_go/customerHelpers"
 	"CRUD_webapp_go/model"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -61,12 +61,16 @@ func (controller *CustomerController) CreateView(w http.ResponseWriter, r *http.
 }
 func (controller *CustomerController) Post(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		customer, errors := CustomerHelpers.ValidatePostPutActions(r)
+		customer, errors := customerHelpers.ValidatePostPutActions(r)
 
 		if len(errors) > 0 {
 			var tmpl = template.Must(template.ParseGlob("templates/*")) // our templates
 			w.WriteHeader(400)
-			tmpl.ExecuteTemplate(w, "CreateCustomer.gohtml", errors)
+			err := tmpl.ExecuteTemplate(w, "CreateCustomer.gohtml", errors)
+			if err != nil {
+				http.Error(w, err.Error(), 500)
+				return
+			}
 			return
 		}
 		_, err := controller.service.Create(&customer)
@@ -82,7 +86,7 @@ func (controller *CustomerController) Post(w http.ResponseWriter, r *http.Reques
 func (controller *CustomerController) Update(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
-		customer, errors := CustomerHelpers.ValidatePostPutActions(r)
+		customer, errors := customerHelpers.ValidatePostPutActions(r)
 
 		customerEdit := model.CustomerAction{
 			Customer: customer,
@@ -91,7 +95,11 @@ func (controller *CustomerController) Update(w http.ResponseWriter, r *http.Requ
 
 		if len(errors) > 0 {
 			var tmpl = template.Must(template.ParseGlob("templates/*")) // our templates
-			tmpl.ExecuteTemplate(w, "EditCustomer.gohtml", customerEdit)
+			err := tmpl.ExecuteTemplate(w, "EditCustomer.gohtml", customerEdit)
+			if err != nil {
+				http.Error(w, err.Error(), 500)
+				return
+			}
 			return
 		}
 		_, err := controller.service.Update(&customer)
@@ -123,7 +131,11 @@ func (controller *CustomerController) EditView(w http.ResponseWriter, r *http.Re
 		Errors:   nil,
 	}
 	var tmpl = template.Must(template.ParseGlob("templates/*"))
-	tmpl.ExecuteTemplate(w, "EditCustomer.gohtml", customerEdit)
+	err = tmpl.ExecuteTemplate(w, "EditCustomer.gohtml", customerEdit)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 }
 
 func (controller *CustomerController) Show(w http.ResponseWriter, r *http.Request) {
@@ -142,7 +154,11 @@ func (controller *CustomerController) Show(w http.ResponseWriter, r *http.Reques
 	}
 
 	var tmpl = template.Must(template.ParseGlob("templates/*"))
-	tmpl.ExecuteTemplate(w, "ShowCustomer.gohtml", customer)
+	err = tmpl.ExecuteTemplate(w, "ShowCustomer.gohtml", customer)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 }
 
 func (controller *CustomerController) Delete(w http.ResponseWriter, r *http.Request) {

@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"CRUD_webapp_go/CustomerHelpers"
 	"CRUD_webapp_go/contracts"
+	"CRUD_webapp_go/customerHelpers"
 	"CRUD_webapp_go/model"
 	"fmt"
 	"github.com/jmoiron/sqlx"
@@ -80,7 +80,7 @@ func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.Cus
 		return customersPage, err
 	}
 
-	customers, _ := CustomerHelpers.CustomersToList(customersQuery)
+	customers, _ := customerHelpers.CustomersToList(customersQuery)
 
 	totalPages := int(math.Ceil(float64(totalRows) / float64(DefaultLimit)))
 	customersPage = model.CustomersPage{
@@ -139,10 +139,16 @@ func (rep CustomerRepository) Update(customer *model.Customer) (int, error) {
 
 func (rep CustomerRepository) Delete(id int) error {
 	query, err := rep.DB.PrepareNamed("DELETE FROM customers WHERE id=$1")
+
 	if err != nil {
 		return err
 	}
-	query.Exec(id)
+
+	_, err = query.Exec(id)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
