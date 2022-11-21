@@ -138,7 +138,7 @@ func (rep CustomerRepository) Update(customer *model.Customer) (int, error) {
 }
 
 func (rep CustomerRepository) Delete(id int) error {
-	query, err := rep.DB.PrepareNamed("DELETE FROM customers WHERE id=$1")
+	query, err := rep.DB.Prepare("DELETE FROM customers WHERE id=$1")
 
 	if err != nil {
 		return err
