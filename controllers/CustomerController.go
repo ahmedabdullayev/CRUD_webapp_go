@@ -3,7 +3,7 @@ package controllers
 import (
 	"CRUD_webapp_go/contracts"
 	"CRUD_webapp_go/customerHelpers"
-	"CRUD_webapp_go/model"
+	"CRUD_webapp_go/models"
 	"github.com/gorilla/mux"
 	"html/template"
 	"net/http"
@@ -29,7 +29,7 @@ func (controller *CustomerController) Customers(w http.ResponseWriter, request *
 	orderType := urlParams.Get("orderType")
 	offset, _ := strconv.Atoi(urlParams.Get("offset"))
 
-	searchParams := model.SearchParams{
+	searchParams := models.SearchParams{
 		FirstName: firstName,
 		LastName:  lastName,
 		Offset:    offset,
@@ -88,7 +88,7 @@ func (controller *CustomerController) Update(w http.ResponseWriter, r *http.Requ
 
 		customer, errors := customerHelpers.ValidatePostPutActions(r)
 
-		customerEdit := model.CustomerAction{
+		customerEdit := models.CustomerAction{
 			Customer: customer,
 			Errors:   errors,
 		}
@@ -126,7 +126,7 @@ func (controller *CustomerController) EditView(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	customerEdit := model.CustomerAction{
+	customerEdit := models.CustomerAction{
 		Customer: customer,
 		Errors:   nil,
 	}

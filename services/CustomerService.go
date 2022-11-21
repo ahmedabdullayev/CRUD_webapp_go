@@ -2,7 +2,7 @@ package services
 
 import (
 	"CRUD_webapp_go/contracts"
-	"CRUD_webapp_go/model"
+	"CRUD_webapp_go/models"
 )
 
 type CustomerService struct {
@@ -15,19 +15,19 @@ func NewEmployeeService(repository contracts.CustomerRepositoryInterface) contra
 	}
 }
 
-func (service CustomerService) GetAllByParams(searchParams model.SearchParams) (model.CustomersPage, error) {
+func (service CustomerService) GetAllByParams(searchParams models.SearchParams) (models.CustomersPage, error) {
 	return service.repository.GetAll(searchParams)
 }
 
-func (service CustomerService) GetOneById(id int) (model.Customer, error) {
+func (service CustomerService) GetOneById(id int) (models.Customer, error) {
 	return service.repository.GetOne(id)
 }
 
-func (service CustomerService) Create(customer *model.Customer) (int, error) {
+func (service CustomerService) Create(customer *models.Customer) (int, error) {
 	return service.repository.Create(customer)
 }
 
-func (service CustomerService) Update(customer *model.Customer) (int, error) {
+func (service CustomerService) Update(customer *models.Customer) (int, error) {
 	return service.repository.Update(customer)
 }
 

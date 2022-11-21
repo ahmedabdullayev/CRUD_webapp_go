@@ -3,7 +3,7 @@ package repositories
 import (
 	"CRUD_webapp_go/contracts"
 	"CRUD_webapp_go/customerHelpers"
-	"CRUD_webapp_go/model"
+	"CRUD_webapp_go/models"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"math"
@@ -24,8 +24,8 @@ func NewCustomerRepository(db *sqlx.DB) contracts.CustomerRepositoryInterface {
 	return &CustomerRepository{DB: db}
 }
 
-func (rep CustomerRepository) GetOne(id int) (model.Customer, error) {
-	customer := model.Customer{}
+func (rep CustomerRepository) GetOne(id int) (models.Customer, error) {
+	customer := models.Customer{}
 	row := rep.DB.QueryRow("SELECT * FROM customers WHERE id = $1", id)
 
 	err := row.Scan(&customer.Id, &customer.FirstName,
@@ -39,15 +39,15 @@ func (rep CustomerRepository) GetOne(id int) (model.Customer, error) {
 	return customer, nil
 }
 
-func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.CustomersPage, error) {
-	var customersPage model.CustomersPage
+func (rep CustomerRepository) GetAll(searchParams models.SearchParams) (models.CustomersPage, error) {
+	var customersPage models.CustomersPage
 	var totalRows int
 	err := rep.DB.QueryRow("SELECT COUNT(*) FROM customers WHERE "+
 		"LOWER(first_name) LIKE '%' || $1 || '%' "+
 		"AND LOWER(last_name) LIKE '%' || $2 || '%'",
 		strings.ToLower(searchParams.FirstName), strings.ToLower(searchParams.LastName)).Scan(&totalRows)
 	if err != nil {
-		return model.CustomersPage{}, err
+		return models.CustomersPage{}, err
 	}
 
 	orderBy := DefaultOrderBy
@@ -83,7 +83,7 @@ func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.Cus
 	customers, _ := customerHelpers.CustomersToList(customersQuery)
 
 	totalPages := int(math.Ceil(float64(totalRows) / float64(DefaultLimit)))
-	customersPage = model.CustomersPage{
+	customersPage = models.CustomersPage{
 		Customers: customers,
 	}
 
@@ -99,7 +99,7 @@ func (rep CustomerRepository) GetAll(searchParams model.SearchParams) (model.Cus
 	return customersPage, nil
 }
 
-func (rep CustomerRepository) Create(customer *model.Customer) (int, error) {
+func (rep CustomerRepository) Create(customer *models.Customer) (int, error) {
 	stmt, err := rep.DB.PrepareNamed("INSERT INTO customers (first_name, last_name, birth_date, gender, email, address) " +
 		"VALUES(:first_name, :last_name, :birth_date, :gender, :email, :address) RETURNING id")
 
@@ -118,7 +118,7 @@ func (rep CustomerRepository) Create(customer *model.Customer) (int, error) {
 	return insertedId, nil
 }
 
-func (rep CustomerRepository) Update(customer *model.Customer) (int, error) {
+func (rep CustomerRepository) Update(customer *models.Customer) (int, error) {
 	query, err := rep.DB.PrepareNamed("UPDATE customers SET first_name = :first_name, last_name = :last_name, " +
 		"birth_date = :birth_date, gender = :gender, email = :email, address = :address WHERE id= :id RETURNING id")
 

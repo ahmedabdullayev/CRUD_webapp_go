@@ -3,7 +3,7 @@ package main
 import (
 	"CRUD_webapp_go/controllers"
 	"CRUD_webapp_go/database"
-	"CRUD_webapp_go/model"
+	"CRUD_webapp_go/models"
 	"CRUD_webapp_go/repositories"
 	"CRUD_webapp_go/services"
 	"github.com/joho/godotenv"
@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-var customerOne = model.Customer{
+var customerOne = models.Customer{
 	Id:        2,
 	FirstName: "Liisa",
 	LastName:  "Kertu",
@@ -27,7 +27,7 @@ var customerOne = model.Customer{
 	Address:   "Pärnu mnt.7",
 }
 
-var customerTwo = model.Customer{
+var customerTwo = models.Customer{
 	FirstName: "Peeter",
 	LastName:  "Mere",
 	BirthDate: time.Date(1988, time.January, 19, 14, 26, 0, 0, time.FixedZone("", 0)),

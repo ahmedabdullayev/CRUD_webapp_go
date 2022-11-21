@@ -1,4 +1,4 @@
-package model
+package models
 
 type CustomersPage struct {
 	Customers []Customer

@@ -1,4 +1,4 @@
-package model
+package models
 
 type SearchParams struct {
 	FirstName string

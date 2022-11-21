@@ -1,7 +1,7 @@
 package customerHelpers
 
 import (
-	"CRUD_webapp_go/model"
+	"CRUD_webapp_go/models"
 	"database/sql"
 	"errors"
 	"github.com/go-playground/validator"
@@ -10,9 +10,9 @@ import (
 	"time"
 )
 
-func CustomersToList(rows *sql.Rows) ([]model.Customer, error) {
-	customer := model.Customer{}
-	var customers []model.Customer
+func CustomersToList(rows *sql.Rows) ([]models.Customer, error) {
+	customer := models.Customer{}
+	var customers []models.Customer
 
 	for rows.Next() {
 		var id int
@@ -59,7 +59,7 @@ func ValidateBirthDate(birthDate string) (time.Time, error) {
 	return formedBirthDate, nil
 }
 
-func ValidatePostPutActions(r *http.Request) (model.Customer, []string) {
+func ValidatePostPutActions(r *http.Request) (models.Customer, []string) {
 	var errors []string
 	validate := validator.New()
 	birthDate := r.FormValue("birthDate")
@@ -71,7 +71,7 @@ func ValidatePostPutActions(r *http.Request) (model.Customer, []string) {
 	//
 	id := r.FormValue("id")
 	idInt, _ := strconv.Atoi(id)
-	customer := model.Customer{
+	customer := models.Customer{
 		Id:        idInt,
 		FirstName: r.FormValue("firstName"),
 		LastName:  r.FormValue("lastName"),
